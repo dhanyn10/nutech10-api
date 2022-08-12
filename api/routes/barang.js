@@ -1,3 +1,4 @@
+const conn      = require('../../connection')
 const express   = require('express')
 const router    = express.Router()
 //file upload
@@ -39,9 +40,19 @@ router.get('/', (req, res, next) => {
 
 router.post('/', upload.single("foto"), (req, res, next) => {
     console.log(req.file)
-    res.status(200).json({
-        message: "post barang",
-        image: req.file.path
+    const nama = req.body.nama
+    const foto = req.file.path
+    const textq = `INSERT INTO barang(nama, foto) VALUES ('${nama}', '${foto}')`
+    conn.query(textq, (err, result) => {
+        if(err)
+            res.status(404).json({
+                message: err
+            })
+        else
+            res.status(200).json({
+                message: nama,
+                image: req.file.path
+            })
     })
 })
 
