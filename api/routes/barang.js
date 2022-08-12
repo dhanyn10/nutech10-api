@@ -173,4 +173,34 @@ router.put('/:id', upload.single("foto"), (req, res, next) => {
     }
 })
 
+router.delete('/:id', (req, response, next) => {
+    const id = req.params.id
+    const checkdata = `SELECT * FROM barang WHERE id='${id}'`
+    conn.query(checkdata, (err, resdata) => {
+        if(resdata.rows.length > 0)
+        {
+            const deletedata = `DELETE FROM barang WHERE id='${id}'`
+            conn.query(deletedata, (err, resdata) => {
+                if(err)
+                    response.status(405).json({
+                        message: "failed",
+                        data: "failed deleting data"
+                    })
+                else
+                    response.status(200).json({
+                        message: "success",
+                        data: "data deleted"
+                    })
+            })
+        }
+        else
+        {
+            response.status(404).json({
+                message: "failed",
+                data: "data not found"
+            })
+        }
+    })
+})
+
 module.exports = router
