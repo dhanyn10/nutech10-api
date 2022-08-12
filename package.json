@@ -1,12 +1,12 @@
 {
-  "name": "dicoding-hapi",
+  "name": "nutech-be",
   "version": "0.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
     "start": "nodemon server.js"
   },
-  "author": "",
+  "author": "Dhany Nurdiansyah",
   "license": "MIT",
   "devDependencies": {
     "nodemon": "^2.0.18"
