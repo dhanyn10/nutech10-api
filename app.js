@@ -29,4 +29,13 @@ app.use((req, res, next) => {
 app.use("/uploads/", express.static("./uploads/"));
 app.use('/barang',barangRoutes)
 
+app.use(function (err, req, res, next) {
+    if (err.code === 'LIMIT_FILE_SIZE') {
+      res.send({ result: 'fail', error: { code: 1001, message: 'File is too big' } })
+      return 
+    }
+  
+    // Handle any other errors
+})
+
 module.exports = app
