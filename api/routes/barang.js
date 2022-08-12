@@ -39,21 +39,42 @@ router.get('/', (req, res, next) => {
 })
 
 router.post('/', upload.single("foto"), (req, res, next) => {
-    console.log(req.file)
-    const nama = req.body.nama
-    const foto = req.file.path
-    const textq = `INSERT INTO barang(nama, foto) VALUES ('${nama}', '${foto}')`
-    conn.query(textq, (err, result) => {
-        if(err)
-            res.status(404).json({
-                message: err
-            })
-        else
-            res.status(200).json({
-                message: nama,
-                image: req.file.path
-            })
+    let rows = 0
+    // console.log(req.file)
+    const nama      = req.body.nama
+    const foto      = req.file.path
+    const hargaBeli = req.body.hargaBeli
+    const hargaJual = req.body.hargaJual
+    const stok      = req.body.stok
+    //cek duplikasi nama
+    const checkdata = `SELECT * FROM barang WHERE nama='${nama}'`
+    conn.query(checkdata, (err, resdata) => {
+        rows = resdata.rows.length
     })
+    if(rows == 0)
+    {
+        const textq =
+        `INSERT INTO barang (nama, foto, harga_beli, harga_jual, stok) 
+        VALUES ('${nama}', '${foto}', ${hargaBeli}, ${hargaJual}, ${stok})`
+        conn.query(textq, (err, result) => {
+            if(err)
+                res.status(405).json({
+                    message: err
+                })
+            else
+                res.status(200).json({
+                    message: nama,
+                    image: req.file.path
+                })
+        })
+    }
+    else
+    {
+        res.status(404).json({
+            message: "data exist"
+        })
+    }
+
 })
 
 router.get('/:id', (req, res, next) => {
