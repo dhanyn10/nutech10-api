@@ -5,7 +5,7 @@ Untuk menjalankan program pada komputer lokal, gunakan command
 npm start
 ```
 
-Untuk saat ini, API-ini sudah tersedia [online](nutech10-api.herokuapp.com/barang) namun memiliki kendala terkait upload image sehingga masih belum bisa digunakan dengan baik.
+Untuk saat ini, API-ini sudah tersedia [online](https://nutech10-api.herokuapp.com/barang) namun memiliki kendala terkait upload image sehingga masih belum bisa digunakan dengan baik.
 
 ### CRUD
 `GET` memperlihatkan semua data, kunjungi alamat berikut
