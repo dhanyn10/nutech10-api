@@ -32,12 +32,6 @@ const upload = multer({
     fileFilter: fileFilter
 })
 
-router.get('/', (req, res, next) => {
-    res.status(200).json({
-        message: "get barang"
-    })
-})
-
 router.post('/', upload.single("foto"), (req, res, next) => {
     let rows = 0
     const nama      = req.body.nama
@@ -89,6 +83,28 @@ router.post('/', upload.single("foto"), (req, res, next) => {
 
 })
 
+//get semua data
+router.get('/', (req, res, next) => {
+    const id = req.params.id
+    const checkdata = `SELECT * FROM barang`
+    conn.query(checkdata, (err, resdata) => {
+        let dataBarang = resdata.rows
+        if(dataBarang.length > 0)
+        {
+            res.status(200).json({
+                message: "success",
+                data: dataBarang
+            })
+        }
+        else
+            res.status(404).json({
+                message: "failed",
+                data: "no data"
+            })
+    })
+})
+
+//get data berdasarkan id
 router.get('/:id', (req, res, next) => {
     const id = req.params.id
     const checkdata = `SELECT * FROM barang WHERE id='${id}'`
