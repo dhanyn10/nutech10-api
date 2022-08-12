@@ -79,6 +79,20 @@ router.post('/', upload.single("foto"), (req, res, next) => {
 
 router.get('/:id', (req, res, next) => {
     const id = req.params.id
+    const checkdata = `SELECT * FROM barang WHERE id='${id}'`
+    conn.query(checkdata, (err, resdata) => {
+        let dataBarang = resdata.rows
+        if(dataBarang.length > 0)
+            res.status(200).json({
+                message: "success",
+                data: dataBarang
+            })
+        else
+            res.status(404).json({
+                message: "failed",
+                data: "no data"
+            })
+    })
 })
 
 module.exports = router
