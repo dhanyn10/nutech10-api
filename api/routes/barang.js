@@ -125,4 +125,52 @@ router.get('/:id', (req, res, next) => {
     })
 })
 
+router.put('/:id', upload.single("foto"), (req, res, next) => {
+    
+    const id        = req.params.id
+    const nama      = req.body.nama
+    const foto      = req.file.path
+    const hargaBeli = req.body.hargaBeli
+    const hargaJual = req.body.hargaJual
+    const stok      = req.body.stok
+
+    //validasi input number
+    if(
+        isNaN(hargaBeli) ||
+        isNaN(hargaJual) ||
+        isNaN(stok)
+    )
+    {
+        
+        res.status(405).json({
+            message: "failed input number"
+        })
+    }
+    else
+    {
+        const updatedata =
+        `UPDATE barang
+        SET nama='${nama}',
+            foto='${foto}',
+            harga_beli=${hargaBeli},
+            harga_jual=${hargaJual},
+            stok=${stok}
+        WHERE id=${id}`
+        conn.query(updatedata, (err, result) => {
+            if(err)
+            {
+                res.status(200).json({
+                    message: "failed",
+                    data: err
+                })
+            }
+            else
+                res.status(404).json({
+                    message: "success",
+                    data: "data updated"
+                })
+        })
+    }
+})
+
 module.exports = router
