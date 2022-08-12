@@ -12,7 +12,24 @@ const storage   = multer.diskStorage({
     }
 })
 
-const upload    = multer({storage: storage})
+const fileFilter = (req, file, cb) => {
+    if(file.mimetype === 'image/jpeg' || file.mimetype === 'image/png')
+    {
+        cb(null, true)
+    }
+    else
+    {
+        cb(null, false)
+    }
+}
+
+const upload = multer({
+    storage: storage,
+    limits: {
+        fileSize: 1024 * 100 //100kb
+    },
+    fileFilter: fileFilter
+})
 
 router.get('/', (req, res, next) => {
     res.status(200).json({
@@ -23,7 +40,8 @@ router.get('/', (req, res, next) => {
 router.post('/', upload.single("foto"), (req, res, next) => {
     console.log(req.file)
     res.status(200).json({
-        message: "post barang"
+        message: "post barang",
+        image: req.file.path
     })
 })
 
