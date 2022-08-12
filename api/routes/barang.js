@@ -69,8 +69,7 @@ router.post('/', upload.single("foto"), (req, res, next) => {
                     })
                 else
                     res.status(200).json({
-                        message: nama,
-                        image: req.file.path
+                        message: "success",
                     })
             })
         }
