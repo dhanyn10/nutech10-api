@@ -1,4 +1,4 @@
 const app = require('./app')
 const http = require('http')
 
-http.createServer(app).listen(5000)
+http.createServer(app).listen(process.env.PORT || 5000)
