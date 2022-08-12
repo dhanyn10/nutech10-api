@@ -40,39 +40,51 @@ router.get('/', (req, res, next) => {
 
 router.post('/', upload.single("foto"), (req, res, next) => {
     let rows = 0
-    // console.log(req.file)
     const nama      = req.body.nama
     const foto      = req.file.path
     const hargaBeli = req.body.hargaBeli
     const hargaJual = req.body.hargaJual
     const stok      = req.body.stok
-    //cek duplikasi nama
-    const checkdata = `SELECT * FROM barang WHERE nama='${nama}'`
-    conn.query(checkdata, (err, resdata) => {
-        rows = resdata.rows.length
-    })
-    if(rows == 0)
+    //validasi input number
+    if(
+        isNaN(hargaBeli) ||
+        isNaN(hargaJual) ||
+        isNaN(stok)
+    )
     {
-        const textq =
-        `INSERT INTO barang (nama, foto, harga_beli, harga_jual, stok) 
-        VALUES ('${nama}', '${foto}', ${hargaBeli}, ${hargaJual}, ${stok})`
-        conn.query(textq, (err, result) => {
-            if(err)
-                res.status(405).json({
-                    message: err
-                })
-            else
-                res.status(200).json({
-                    message: nama,
-                    image: req.file.path
-                })
+        res.status(405).json({
+            message: "failed input number"
         })
     }
     else
     {
-        res.status(404).json({
-            message: "data exist"
+        const checkdata = `SELECT * FROM barang WHERE nama='${nama}'`
+        conn.query(checkdata, (err, resdata) => {
+            rows = resdata.rows.length
         })
+        if(rows == 0)
+        {
+            const textq =
+            `INSERT INTO barang (nama, foto, harga_beli, harga_jual, stok) 
+            VALUES ('${nama}', '${foto}', ${hargaBeli}, ${hargaJual}, ${stok})`
+            conn.query(textq, (err, result) => {
+                if(err)
+                    res.status(405).json({
+                        message: err
+                    })
+                else
+                    res.status(200).json({
+                        message: nama,
+                        image: req.file.path
+                    })
+            })
+        }
+        else
+        {
+            res.status(404).json({
+                message: "data exist"
+            })
+        }
     }
 
 })
@@ -83,10 +95,12 @@ router.get('/:id', (req, res, next) => {
     conn.query(checkdata, (err, resdata) => {
         let dataBarang = resdata.rows
         if(dataBarang.length > 0)
+        {
             res.status(200).json({
                 message: "success",
                 data: dataBarang
             })
+        }
         else
             res.status(404).json({
                 message: "failed",
