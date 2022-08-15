@@ -159,13 +159,13 @@ router.put('/:id', upload.single("foto"), (req, res, next) => {
         conn.query(updatedata, (err, result) => {
             if(err)
             {
-                res.status(200).json({
+                res.status(404).json({
                     message: "failed",
                     data: err
                 })
             }
             else
-                res.status(404).json({
+                res.status(200).json({
                     message: "success",
                     data: "data updated"
                 })
