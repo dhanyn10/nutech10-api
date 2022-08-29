@@ -96,7 +96,9 @@ router.post('/', upload.single("foto"), (req, res, next) => {
 //get semua data
 router.get('/', async (req, res, next) => {
     const checkdata = `SELECT * FROM barang`
-    const allData = await redisClient.get('all')
+    const allData = await redisClient.json.get('all', {
+        path: '.'
+    })
     if(allData == null)
     {
         conn.query(checkdata, async(err, resdata) => {
@@ -107,7 +109,7 @@ router.get('/', async (req, res, next) => {
                     message: "success",
                     data: dataBarang
                 })
-                await redisClient.set('all', JSON.stringify(dataBarang))
+                await redisClient.json.set('all', '.',dataBarang)
             }
             else {
                 res.status(404).json({
@@ -119,11 +121,11 @@ router.get('/', async (req, res, next) => {
     }
     else
     {
-        let jsonString = await redisClient.get('all')
-        jsonString = JSON.parse(jsonString)
         res.status(200).json({
             message: "success",
-            data: jsonString
+            data: await redisClient.json.get('all', {
+                path: '.'
+            })
         })
     }
 })
