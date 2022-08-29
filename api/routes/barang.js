@@ -3,6 +3,16 @@ const express   = require('express')
 const router    = express.Router()
 //file upload
 const multer    = require('multer')
+const redis     = require('redis')
+
+let redisClient
+(async () => {
+    redisClient = redis.createClient()
+  
+    redisClient.on("error", (error) => console.error(`Error : ${error}`))
+  
+    await redisClient.connect()
+  })();
 
 const storage   = multer.diskStorage({
     destination: (req, file, cb) => {
@@ -84,24 +94,38 @@ router.post('/', upload.single("foto"), (req, res, next) => {
 })
 
 //get semua data
-router.get('/', (req, res, next) => {
-    const id = req.params.id
+router.get('/', async (req, res, next) => {
     const checkdata = `SELECT * FROM barang`
-    conn.query(checkdata, (err, resdata) => {
-        let dataBarang = resdata.rows
-        if(dataBarang.length > 0)
-        {
-            res.status(200).json({
-                message: "success",
-                data: dataBarang
-            })
-        }
-        else
-            res.status(404).json({
-                message: "failed",
-                data: "no data"
-            })
-    })
+    const allData = await redisClient.get('all')
+    if(allData == null)
+    {
+        conn.query(checkdata, async(err, resdata) => {
+            let dataBarang = resdata.rows
+            if(dataBarang.length > 0)
+            {
+                res.status(200).json({
+                    message: "success",
+                    data: dataBarang
+                })
+                await redisClient.set('all', JSON.stringify(dataBarang))
+            }
+            else {
+                res.status(404).json({
+                    message: "failed",
+                    data: "no data"
+                })
+            }
+        })
+    }
+    else
+    {
+        let jsonString = await redisClient.get('all')
+        jsonString = JSON.parse(jsonString)
+        res.status(200).json({
+            message: "success",
+            data: jsonString
+        })
+    }
 })
 
 //get data berdasarkan id
